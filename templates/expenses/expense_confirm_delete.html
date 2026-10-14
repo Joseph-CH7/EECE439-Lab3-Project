@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Delete expense{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-8">
+        <div class="card shadow-sm border-danger">
+            <div class="card-body p-4">
+                <h2 class="mb-3">Delete expense?</h2>
+
+                <p class="mb-1">
+                    <strong>{{ expense.title }}</strong> — ${{ expense.amount }}
+                </p>
+                <p class="text-muted">
+                    {{ expense.category.name }}, {{ expense.date|date:"M j, Y" }}
+                </p>
+                <p class="text-danger">This cannot be undone.</p>
+
+                <form method="post" class="d-flex gap-2">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, delete</button>
+                    <a href="{% url 'expense_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Expenses{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Expense history</h2>
+    <a href="{% url 'expense_create' %}" class="btn btn-primary">+ Add expense</a>
+</div>
+
+<form method="get" class="card shadow-sm mb-3">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            {% for field in filter_form %}
+                <div class="col-6 col-md">
+                    <label class="form-label small mb-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <div class="col-12 col-md-auto d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a href="{% url 'expense_list' %}" class="btn btn-outline-secondary">Clear</a>
+            </div>
+        </div>
+
+        {% for error in filter_form.non_field_errors %}
+            <div class="text-danger small mt-2">{{ error }}</div>
+        {% endfor %}
+        {% for field in filter_form %}
+            {% for error in field.errors %}
+                <div class="text-danger small mt-2">{{ field.label }}: {{ error }}</div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</form>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th class="text-end">Amount</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                    <tr>
+                        <td class="text-nowrap">{{ expense.date|date:"M j, Y" }}</td>
+                        <td>
+                            {{ expense.title }}
+                            {% if expense.description %}
+                                <div class="text-muted small">{{ expense.description|truncatechars:60 }}</div>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge text-bg-secondary">{{ expense.category.name }}</span></td>
+                        <td class="text-end text-nowrap">${{ expense.amount }}</td>
+                        <td class="text-end text-nowrap">
+                            <a href="{% url 'expense_update' expense.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="{% url 'expense_delete' expense.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-4">
+                            {% if is_filtered %}
+                                No expenses match these filters.
+                            {% else %}
+                                No expenses yet.
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% if expenses %}
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td colspan="3" class="text-end">Total{% if is_filtered %} (filtered){% endif %}</td>
+                        <td class="text-end text-nowrap">${{ total|floatformat:2 }}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            {% endif %}
+        </table>
+    </div>
+</div>
+{% endblock %}
