@@ -1,4 +1,5 @@
 from django import forms
+from django.utils import timezone
 
 from .models import Category, Expense
 
@@ -27,6 +28,12 @@ class ExpenseForm(forms.ModelForm):
         if amount <= 0:
             raise forms.ValidationError("Amount must be greater than 0.")
         return amount
+
+    def clean_date(self):
+        expense_date = self.cleaned_data["date"]
+        if expense_date > timezone.localdate():
+            raise forms.ValidationError("Date can't be in the future.")
+        return expense_date
 
 
 class ExpenseFilterForm(forms.Form):

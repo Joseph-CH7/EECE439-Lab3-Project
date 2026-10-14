@@ -35,7 +35,7 @@ def home(request):
         .order_by("-total")
     )
     for row in by_category:
-        row["percent"] = row["total"] * 100 / month_total
+        row["percent"] = row["total"] * 100 / month_total if month_total else 0
 
     # 3. Recent expenses
     recent = expenses.select_related("category")[:8]
