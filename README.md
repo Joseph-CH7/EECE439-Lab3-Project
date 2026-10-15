@@ -17,7 +17,7 @@ It runs locally on SQLite.
 
 - Python 3.12 or newer, Django 6.1
 - SQLite
-- Bootstrap 5 (loaded from a CDN)
+- Plain HTML templates (no CSS framework)
 
 ## Getting started
 
